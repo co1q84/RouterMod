@@ -123,9 +123,8 @@ jobs:
         name: OpenWrt_firmware
         path: ${{ env.FIRMWARE }}
  
-    - uses: actions/checkout@v2
-    - name: Upload ftp
-      uses: sebastianpopp/ftp-action@releases/v2
+    - name: ftp-action
+      uses: sebastianpopp/ftp-action@v2.0.0
       with:
         host: ${{ secrets.FTP_SERVER }}
         user: ${{ secrets.FTP_USER }}
