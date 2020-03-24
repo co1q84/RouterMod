@@ -130,4 +130,4 @@ jobs:
         user: ${{ secrets.FTP_USER }}
         password: ${{ secrets.FTP_PASSWORD }}
         localDir: ${{ env.FIRMWARE }}
-        remoteDir: "Openwrt"
+        remoteDir: "ftp"
