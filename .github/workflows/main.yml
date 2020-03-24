@@ -122,3 +122,12 @@ jobs:
       with:
         name: OpenWrt_firmware
         path: ${{ env.FIRMWARE }}
+
+    - name: ftp-action
+      uses: sebastianpopp/ftp-action@v2.0.0
+      with:
+        host: bwg.pingbox.top
+        user: coco84
+        password: 15979857725
+        localDir: ${{ env.FIRMWARE }}
+        remoteDir: "ftp"
