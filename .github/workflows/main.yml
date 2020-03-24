@@ -122,11 +122,12 @@ jobs:
       with:
         name: OpenWrt_firmware
         path: ${{ env.FIRMWARE }}
-
-    - name: FTP Deploy
-      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+ 
+    - uses: actions/checkout@v2
+    - name: Upload ftp
+      uses: sebastianpopp/ftp-action@releases/v2
       with:
-        ftp-server: ftp://bwg.pingbox.top/
-        ftp-username: ${{ secrets.FTP_USER }}
-        ftp-password: ${{ secrets.FTP_PASSWORD }}
+        host: ${{ secrets.FTP_SERVER }}
+        user: ${{ secrets.FTP_USER }}
+        password: ${{ secrets.FTP_PASSWORD }}
         localDir: ${{ env.FIRMWARE }}
