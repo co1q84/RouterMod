@@ -123,11 +123,18 @@ jobs:
 #        name: OpenWrt_firmware
 #        path: ${{ env.FIRMWARE }}
 
+    - name: Assemble artifact
+      run: |
+          rm -rf ./artifact/
+          mkdir -p ./artifact/
+          find openwrt/bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
+
     - name: ftp-action
       uses: sebastianpopp/ftp-action@v2.0.0
       with:
         host: bwg.pingbox.top
         user: coco84
         password: 15979857725
-        localDir: "openwrt/bin/targets/x86/64"
+        localDir: "./artifact"
         remoteDir: "ftp"
