@@ -103,12 +103,12 @@ jobs:
       run: |
         cd openwrt
         make -j1 V=s
-    - name: Upload bin directory
-      uses: actions/upload-artifact@master
-      if: always()
-      with:
-        name: OpenWrt_bin
-        path: openwrt/bin
+#    - name: Upload bin directory
+#      uses: actions/upload-artifact@master
+#      if: always()
+#      with:
+#        name: OpenWrt_bin
+#        path: openwrt/bin
 
     - name: Organize files
       if: always()
@@ -129,5 +129,5 @@ jobs:
         host: bwg.pingbox.top
         user: coco84
         password: 15979857725
-        localDir: ${{ env.FIRMWARE }}
+        localDir: "openwrt/bin/targets/x86/64"
         remoteDir: "ftp"
