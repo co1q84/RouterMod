@@ -116,13 +116,13 @@ jobs:
         cd openwrt/bin/targets/*/*
         rm -rf packages
         echo "::set-env name=FIRMWARE::$(pwd)"
-    - name: Upload firmware
-      uses: actions/upload-artifact@master
-      if: always()
-      with:
-        name: OpenWrt_firmware
-        path: ${{ env.FIRMWARE }}
- 
+#    - name: Upload firmware
+#      uses: actions/upload-artifact@master
+#      if: always()
+#      with:
+#        name: OpenWrt_firmware
+#        path: ${{ env.FIRMWARE }}
+
     - name: ftp-action
       uses: sebastianpopp/ftp-action@v2.0.0
       with:
