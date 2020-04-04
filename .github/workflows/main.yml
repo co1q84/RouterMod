@@ -70,6 +70,9 @@ jobs:
         rm -rf package/lean/luci-app-pptp-server
         rm -rf package/lean/luci-app-v2ray-server
         rm -rf package/lean/luci-app-verysync
+        rm -rf package/lean/luci-app-xlnetacc
+        rm -rf package/lean/luci-app-ddns
+        rm -rf package/lean/luci-app-unblockmusic
 
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
