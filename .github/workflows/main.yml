@@ -125,8 +125,8 @@ jobs:
     - name: Remove old artifacts
       uses: c-hive/gha-remove-artifacts@v1
       with:
-        age: '2 week'
-        skip-tags: true
+        age: '1 week'
+        skip-tags: false
         
     - name: Upload bin directory
       uses: actions/upload-artifact@master
