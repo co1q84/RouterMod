@@ -56,31 +56,36 @@ jobs:
         REPO_BRANCH: master
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
 
-    - name: Clone Lienol packages
-      run: |
-        sed -i '$asrc-git lienol https://github.com/Lienol/openwrt-package' openwrt/feeds.conf.default
-    - name: Update feeds
+    # - name: Clone Lienol packages
+    #   run: |
+    #     sed -i '$asrc-git lienol https://github.com/Lienol/openwrt-package' openwrt/feeds.conf.default
+      
+   #- name: Update feeds
+   #    run: |
+   #      cd openwrt && ./scripts/feeds update -a
+         
+    #     rm -rf feeds/lienol/package/v2ray
+    #     rm -rf feeds/lienol/package/openssl1.1
+    #     rm -rf feeds/lienol/package/trojan
+    #     rm -rf feeds/lienol/package/ipt2socks
+    #     rm -rf feeds/lienol/package/shadowsocksr-libev
+    #     rm -rf feeds/lienol/package/pdnsd-alt
+    #     rm -rf package/lean/kcptun
+    #     rm -rf package/lean/verysync
+    #     rm -rf package/lean/luci-app-kodexplorer
+    #     rm -rf package/lean/luci-app-pppoe-relay
+    #     rm -rf package/lean/luci-app-pptp-server
+    #     rm -rf package/lean/luci-app-v2ray-server
+    #     rm -rf package/lean/luci-app-verysync
+    #     rm -rf package/lean/luci-app-xlnetacc
+    #     rm -rf package/lean/luci-app-ddns
+    #     rm -rf package/lean/luci-app-unblockmusic
+    #     rm -rf package/lean/luci-app-airplay2
+        
+    - name: update and Install feeds
       run: |
         cd openwrt && ./scripts/feeds update -a
-        rm -rf feeds/lienol/package/v2ray
-        rm -rf feeds/lienol/package/openssl1.1
-        rm -rf feeds/lienol/package/trojan
-        rm -rf feeds/lienol/package/ipt2socks
-        rm -rf feeds/lienol/package/shadowsocksr-libev
-        rm -rf feeds/lienol/package/pdnsd-alt
-        rm -rf package/lean/kcptun
-        rm -rf package/lean/verysync
-        rm -rf package/lean/luci-app-kodexplorer
-        rm -rf package/lean/luci-app-pppoe-relay
-        rm -rf package/lean/luci-app-pptp-server
-        rm -rf package/lean/luci-app-v2ray-server
-        rm -rf package/lean/luci-app-verysync
-        rm -rf package/lean/luci-app-xlnetacc
-        rm -rf package/lean/luci-app-ddns
-        rm -rf package/lean/luci-app-unblockmusic
-        rm -rf package/lean/luci-app-airplay2
-    - name: Install feeds
-      run: cd openwrt && ./scripts/feeds install -a
+        cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration
       env:
@@ -119,11 +124,11 @@ jobs:
         make -j$(nproc) || make -j1 V=s
         echo "::set-output name=status::success"
         
-    - name: Remove old artifacts
-      uses: c-hive/gha-remove-artifacts@v1
-      with:
-        age: '1 week'
-        skip-tags: false
+#    - name: Remove old artifacts
+#      uses: c-hive/gha-remove-artifacts@v1
+#      with:
+#        age: '1 week'
+#        skip-tags: false
         
     - name: Upload bin directory
       uses: actions/upload-artifact@master
