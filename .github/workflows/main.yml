@@ -143,6 +143,6 @@ jobs:
         host: ${{ secrets.FTP_SERVER }}
         user: ${{ secrets.FTP_USER }}
         password: ${{ secrets.FTP_PASSWORD }}
-        localDir: "./artifact"
+        localDir: ${{ env.FIRMWARE }}
         remoteDir: "ftp"
         forceSsl: true
