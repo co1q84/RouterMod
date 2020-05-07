@@ -15,7 +15,7 @@ sed -i 's/192.168.1.1/192.168.50.1/g' package/base-files/files/bin/config_genera
 #git clone https://github.com/kenzok8/openwrt-packages.git package/others
 #rm -rf package/others/luci-app-aliddns
 #rm -rf package/others/luci-theme-atmaterial
-https://github.com/fw876/helloworld.git package/others
+git clone https://github.com/fw876/helloworld.git package/others
 git clone https://github.com/sypopo/luci-theme-atmaterial.git package/lean/luci-theme-atmaterial
 git clone https://github.com/honwen/luci-app-aliddns.git package/others/luci-app-aliddns
 #git clone https://github.com/co1q84/luci-theme-netgear.git package/lean/luci-theme-netgear
