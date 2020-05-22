@@ -45,8 +45,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@master
 
-    - name: cleanup old action artifacts
-      run: .github/workflows/purge_artifacts.sh ${{ secrets.REPO_ACCESS_TOKEN }}
+    - name: Purge artifacts
+      with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          expire-in: 7days # Setting this to 0 will delete all artifacts
 
     - name: Initialization environment
       env:
