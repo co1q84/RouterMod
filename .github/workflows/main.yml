@@ -58,7 +58,7 @@ jobs:
           cp ../openwrt-config/config .config
           cp ../openwrt-config/diy.sh diy.sh
           chmod +x diy.sh
-          ../diy.sh
+          ./diy.sh
           
     - name: Make Defconfig
       run: |
