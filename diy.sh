@@ -11,7 +11,7 @@ sed -i 's/192.168.1.1/192.168.50.1/g' package/base-files/files/bin/config_genera
 # rm -rf package/lean/luci-theme-argon
 # 添加新的包
 # git clone https://github.com/jerrykuku/luci-theme-argon.git package/lean/luci-theme-argon
-#git clone https://github.com/kenzok8/small.git package/small
+git clone https://github.com/kenzok8/small.git package/small
 #git clone https://github.com/kenzok8/openwrt-packages.git package/others
 #rm -rf package/others/luci-app-aliddns
 #rm -rf package/others/luci-theme-atmaterial
