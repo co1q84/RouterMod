@@ -22,6 +22,13 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
+  
+    - name: Purge artifacts
+      uses: kolpav/purge-artifacts-action@v1
+      with:
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          expire-in: 7days # Setting this to 0 will delete all artifacts
+
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
