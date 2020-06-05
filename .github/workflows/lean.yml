@@ -73,8 +73,13 @@ jobs:
     - name: 自定义安装源
       working-directory: ./openwrt
       run: |
+        rm -rf package/lean/luci-theme-argon
         git clone https://github.com/Lienol/openwrt-package package/lienol
-        git clone https://github.com/kenzok8/litte package/litte     
+        git clone https://github.com/sypopo/luci-theme-atmaterial.git package/lean/luci-theme-atmaterial
+        git clone https://github.com/honwen/luci-app-aliddns.git package/others/luci-app-aliddns
+        git clone https://github.com/sypopo/luci-theme-argon-mc.git package/lean/luci-theme-argon-mc
+        git clone https://github.com/kenzok8/litte package/litte
+        git clone https://github.com/fw876/helloworld.git package/others     
     - name: 自定义配置文件Lean
       env:
         CONFIG_FILE: 'Lean.config'
