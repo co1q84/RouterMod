@@ -1,19 +1,15 @@
-#=================================================
-# Description: Build OpenWrt using GitHub Actions
-# Lisence: MIT
-# Author: kenzo
-#=================================================
+#
+# This is free software, lisence use MIT.
+# 
+# Copyright (C) 2019 P3TERX <https://p3terx.com>
+# Copyright (C) 2019 KFERMercer <KFER.Mercer@gmail.com>
+# 
+# <https://github.com/KFERMercer/OpenWrt-CI>
+# 
 
 name: Lean_x86_64
 
 on: 
-  release:
-    types: [published]
-
-  push:
-    branches: 
-      - master
-
   schedule:
     - cron: 0 8 * * 5
   
@@ -25,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 检查
+    - name: Checkout
       uses: actions/checkout@master
 
     - name: Initialization environment
@@ -56,7 +52,7 @@ jobs:
         sudo -E apt-get -y autoremove --purge
         sudo -E apt-get clean
 
-    - name: 克隆源代码
+    - name: Clone
       env: 
         REPO_URL: https://github.com/coolsnowwolf/lede
         REPO_BRANCH: master
@@ -65,20 +61,20 @@ jobs:
         cd openwrt
         sed -i '5s/#//' feeds.conf.default
         
-    - name: 更新 & 安装 feeds
+    - name: Update feeds
       working-directory: ./openwrt
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         ./scripts/feeds install -a
 
-    - name: 自定义安装源
+    - name: Other feeds
       working-directory: ./openwrt
       run: |
         git clone https://github.com/Lienol/openwrt-package package/lienol
         git clone https://github.com/kenzok8/litte package/litte     
 
-    - name: 自定义配置文件Lean
+    - name: Customize
       env:
         CONFIG_FILE: 'Lean.config'
       run: |
@@ -93,20 +89,20 @@ jobs:
         ./scripts/feeds update -a
         ./scripts/feeds install -a
         
-    - name: 下载包文件
+    - name: Make download
       working-directory: ./openwrt
       run: |
         make download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
-    - name: 编译固件
+    - name: Compile firmware
       working-directory: ./openwrt
       run: |
         echo -e "$(nproc) thread build."
         make -j$(nproc) V=s
 
-    - name : 上传固件与目录
+    - name : Upload-artifact
       uses: actions/upload-artifact@master
       with:
         name: Lean
