@@ -58,8 +58,7 @@ jobs:
         REPO_BRANCH: master
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-        cd openwrt
-        sed -i 's/\"#src-git\"/\"src-git\"/g' ./feeds.conf.default
+        sed -i 's/\"#src-git\"/\"src-git\"/g' openwrt/feeds.conf.default
         
     - name: Update feeds
       working-directory: ./openwrt
@@ -71,24 +70,31 @@ jobs:
     - name: Other feeds
       working-directory: ./openwrt
       run: |
-        git clone https://github.com/Lienol/openwrt-package package/lienol
-        git clone https://github.com/kenzok8/litte package/litte     
+        git clone https://github.com/sypopo/luci-theme-atmaterial.git package/lean/luci-theme-atmaterial
+        git clone https://github.com/fw876/helloworld.git package/lean/luci-app-ssr-plus
+        git clone https://github.com/sypopo/luci-theme-argon-mc.git package/lean/luci-theme-argon-mc    
 
     - name: Customize
-      env:
-        CONFIG_FILE: 'Lean.config'
       run: |
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x ./customize.sh && ./customize.sh
-        cd openwrt && rm -rf package/litte/luci-app-ssr-plus
-        sudo -E chmod 755 package/litte/luci-app-adguardhome/root/etc/init.d/AdGuardHome
-        rm -rf package/litte/microsocks && rm -rf package/litte/redsocks2 && rm -rf package/litte/tcpping
-        cp -f package/litte/default-settings package/lean/default-settings/files/zzz-default-settings
-        cp -f package/litte/banner package/base-files/files/etc/banner
-        cp -f package/litte/Leandiffconfig .config && make defconfig
+        cd openwrt
+        sed -i 's/192.168.1.1/192.168.50.1/g' package/base-files/files/bin/config_generate
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-        
+
+    - name: Clone Config
+      env: 
+        REPO_URL: https://github.com/co1q84/RouterMod
+      run: |
+          git clone --depth 1 $REPO_URL lean-config
+          cd openwrt
+          rm -f .config
+          cp ../lean-config/Lean.config .config     
+
+    - name: Make Defconfig
+      run: |
+          cd openwrt
+          make defconfig
+
     - name: Make download
       working-directory: ./openwrt
       run: |
