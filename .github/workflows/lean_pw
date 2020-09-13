@@ -1,0 +1,126 @@
+#
+# This is free software, lisence use MIT.
+# 
+# Copyright (C) 2019 P3TERX <https://p3terx.com>
+# Copyright (C) 2019 KFERMercer <KFER.Mercer@gmail.com>
+# 
+# <https://github.com/KFERMercer/OpenWrt-CI>
+# 
+
+name: Lean_x86_64
+
+on: 
+  schedule:
+    - cron: 0 8 * * 5
+  
+  watch:
+    types: [started]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@main
+
+    - name: Initialization environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        docker rmi `docker images -q`
+        echo "Deleting files, please wait ..."
+        sudo rm -rf \
+          /usr/share/dotnet \
+          /etc/mysql \
+          /etc/php
+        sudo -E apt-get -y purge \
+          azure-cli \
+          ghc* \
+          zulu* \
+          hhvm \
+          llvm* \
+          firefox \
+          google* \
+          dotnet* \
+          powershell \
+          openjdk* \
+          mysql* \
+          php*
+        sudo -E apt-get update
+        sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev patch unzip lib32gcc1 libc6-dev-i386 subversion flex node-uglify gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils  libelf-dev autoconf automake libtool autopoint device-tree-compiler libuv-dev python3.6 zlib1g-dev upx-ucl node-uglify antlr3 gperf
+        sudo -E apt-get -y autoremove --purge
+        sudo -E apt-get clean
+
+    - name: Clone
+      env: 
+        REPO_URL: https://github.com/coolsnowwolf/lede
+        REPO_BRANCH: master
+      run: |
+        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+        sed -i 's/\"#src-git\"/\"src-git\"/g' openwrt/feeds.conf.default
+        
+    - name: Update feeds
+      working-directory: ./openwrt
+      run: |
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+        ./scripts/feeds install -a
+
+    - name: Other feeds
+      working-directory: ./openwrt
+      run: |
+        git clone https://github.com/Lienol/openwrt-package package/lienol
+        git clone https://github.com/kenzok8/litte package/litte
+        rm -rf package/litte/microsocks && rm -rf package/litte/redsocks2 && rm -rf package/litte/tcpping && rm -rf package/litte/luci-app-ssr-plus
+        git clone https://github.com/sypopo/luci-theme-atmaterial.git package/lean/luci-theme-atmaterial
+        git clone https://github.com/fw876/helloworld.git package/helloworld
+        git clone https://github.com/sypopo/luci-theme-argon-mc.git package/lean/luci-theme-argon-mc 
+        git clone -b 18.06 https://github.com/garypang13/luci-theme-edge.git package/lean/luci-theme-edge
+        rm -rf package/lean/luci-theme-argon  
+        git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/lean/luci-theme-argon
+        
+    - name: Customize
+      run: |
+        cd openwrt
+        sed -i 's/192.168.1.1/192.168.50.1/g' package/base-files/files/bin/config_generate
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
+
+    - name: Clone Config
+      env: 
+        REPO_URL: https://github.com/co1q84/RouterMod
+      run: |
+          git clone --depth 1 $REPO_URL lean-config
+          cd openwrt
+          rm -f .config
+          cp ../lean-config/Lean.config .config     
+
+    - name: Make Defconfig
+      run: |
+          cd openwrt
+          make defconfig
+
+    - name: Make download
+      working-directory: ./openwrt
+      run: |
+        make download -j$(nproc)
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+
+    - name: Compile firmware
+      working-directory: ./openwrt
+      run: |
+        echo -e "$(nproc) thread build."
+        make -j$(nproc) V=s
+
+    - name : Upload-artifact
+      uses: actions/upload-artifact@main
+      with:
+        name: Lean
+        path: openwrt/bin
+
+    - name: Remove old artifacts
+      uses: c-hive/gha-remove-artifacts@v1
+      with:
+        age: '1 week'
