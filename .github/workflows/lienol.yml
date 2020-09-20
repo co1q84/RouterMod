@@ -71,7 +71,9 @@ jobs:
     - name: Other feeds
       working-directory: ./openwrt
       run: |
-        git clone https://github.com/kenzok8/litte package/litte     
+        git clone https://github.com/kenzok8/litte package/litte
+        git clone https://github.com/sypopo/luci-theme-atmaterial.git package/lean/luci-theme-atmaterial
+
         
     - name: Customize
       run: |
