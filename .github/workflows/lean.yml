@@ -65,7 +65,6 @@ jobs:
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds install -a
-        ./scripts/feeds install -a
 
     - name: Other feeds
       working-directory: ./openwrt
