@@ -58,8 +58,6 @@ jobs:
       run: |
         git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
         sed -i 's/\"#src-git\"/\"src-git\"/g' openwrt/feeds.conf.default
-        sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
-        sed -i '$a src-git litte https://github.com/kenzok8/litte' feeds.conf.default
         
     - name: Update feeds
       working-directory: ./openwrt
@@ -80,6 +78,8 @@ jobs:
       run: |
         cd openwrt
         sed -i 's/192.168.1.1/192.168.50.1/g' package/base-files/files/bin/config_generate
+        sed -i '$a src-git small https://github.com/kenzok8/small' openwrt/feeds.conf.default
+        sed -i '$a src-git litte https://github.com/kenzok8/litte' openwrt/feeds.conf.default
         ./scripts/feeds update -a
         ./scripts/feeds install -a
     - name: Clone Config
