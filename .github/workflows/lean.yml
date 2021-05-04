@@ -74,6 +74,14 @@ jobs:
         git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/lean/luci-theme-argon
         git clone https://github.com/kenzok8/small.git package/small
         git clone https://github.com/kenzok8/litte.git package/litte
+        rm -rf package/litte/luci-app-dnsfilter
+        rm -rf package/litte/luci-app-koolddns
+        rm -rf package/litte/luci-app-aliddns
+        git clone https://github.com/garypang13/luci-app-dnsfilter.git package/litte/luci-app-dnsfilter
+        git clone https://github.com/binge8/luci-app-koolddns.git package/litte/luci-app-koolddns
+        git clone https://github.com/honwen/luci-app-aliddns.git package/litte/luci-app-aliddns
+        
+        
         
     - name: Customize
       run: |
