@@ -77,9 +77,10 @@ jobs:
         rm -rf package/litte/luci-app-dnsfilter
         rm -rf package/litte/luci-app-koolddns
         rm -rf package/litte/luci-app-aliddns
+        git clone https://github.com/Beginner-Go/luci-app-tencentddns.git package/litte/luci-app-tencentddns
         git clone https://github.com/garypang13/luci-app-dnsfilter.git package/litte/luci-app-dnsfilter
         git clone https://github.com/binge8/luci-app-koolddns.git package/litte/luci-app-koolddns
-        git clone https://github.com/honwen/luci-app-aliddns.git package/litte/luci-app-aliddns
+        git clone https://github.com/honwen/luci-app-aliddns.git package//luci-app-aliddns
         
         
         
