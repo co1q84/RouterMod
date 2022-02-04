@@ -15,111 +15,112 @@ on:
   
   watch:
     types: [started]
-
 jobs:
-  build:
-    runs-on: Ubuntu-20.04
+
+  build_openwrt:
+
+    name: Build OpenWrt firmware
+
+    runs-on: ubuntu-latest
+
+    if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@master
 
-    - name: Initialization environment
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        docker rmi `docker images -q`
-        echo "Deleting files, please wait ..."
-        sudo rm -rf \
-          /usr/share/dotnet \
-          /etc/mysql \
-          /etc/php
-        sudo -E apt-get -y purge \
-          azure-cli \
-          ghc* \
-          zulu* \
-          hhvm \
-          llvm* \
-          firefox \
-          google* \
-          dotnet* \
-          powershell \
-          openjdk* \
-          mysql* \
-          php*
-        sudo -E apt-get update
-        sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev patch python3 python2.7 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex node-uglify git gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx-ucl libelf-dev autoconf automake libtool autopoint device-tree-compiler g++-multilib antlr3 gperf wget curl swig rsync
-        sudo -E apt-get -y autoremove --purge
-        sudo -E apt-get clean
-    - name: Clone
-      env: 
-        REPO_URL: https://github.com/coolsnowwolf/lede
-        REPO_BRANCH: master
-      run: |
-        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-        sed -i 's/\"#src-git\"/\"src-git\"/g' openwrt/feeds.conf.default
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: master
+
+      - name: Space cleanup
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* adoptopenjdk* mysql* php* mongodb* dotnet* moby* snapd* || true
+          sudo -E apt-get update
+          sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch python3 unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs gcc-multilib g++-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler antlr3 gperf swig
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+          df -h
+          
+      - name: Clone
+        env: 
+          REPO_URL: https://github.com/coolsnowwolf/lede
+          REPO_BRANCH: master
+        run: |
+          git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+          sed -i 's/\"#src-git\"/\"src-git\"/g' openwrt/feeds.conf.default
         
-    - name: Update feeds
-      working-directory: ./openwrt
-      run: |
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
-    - name: Other feeds
-      working-directory: ./openwrt
-      run: |
-        git clone https://github.com/sypopo/luci-theme-atmaterial.git package/lean/luci-theme-atmaterial
-        git clone https://github.com/sypopo/luci-theme-argon-mc.git package/lean/luci-theme-argon-mc 
-        git clone -b 18.06 https://github.com/garypang13/luci-theme-edge.git package/lean/luci-theme-edge
-        rm -rf package/lean/luci-theme-argon  
-        git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/lean/luci-theme-argon
-        git clone https://github.com/kenzok8/small.git package/small
-        git clone https://github.com/kenzok8/litte.git package/litte
-        rm -rf package/litte/luci-app-dnsfilter
-        rm -rf package/litte/luci-app-koolddns
-        rm -rf package/litte/luci-app-aliddns
-        git clone https://github.com/MapesxGM/luci-app-tencentddns.git package/litte/luci-app-tencentddns
-        git clone https://github.com/garypang13/luci-app-dnsfilter.git package/litte/luci-app-dnsfilter
-        git clone https://github.com/binge8/luci-app-koolddns.git package/litte/luci-app-koolddns
-        git clone https://github.com/honwen/luci-app-aliddns.git package//luci-app-aliddns
-        
-        
-        
-    - name: Customize
-      run: |
-        cd openwrt
-        sed -i 's/192.168.1.1/192.168.50.1/g' package/base-files/files/bin/config_generate
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
-    - name: Clone Config
-      env: 
-        REPO_URL: https://github.com/co1q84/RouterMod
-      run: |
-          git clone --depth 1 $REPO_URL lean-config
+      - name: Update feeds
+        working-directory: ./openwrt
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+      - name: Other feeds
+        working-directory: ./openwrt
+        run: |
+          git clone https://github.com/sypopo/luci-theme-atmaterial.git package/lean/luci-theme-atmaterial
+          git clone https://github.com/sypopo/luci-theme-argon-mc.git package/lean/luci-theme-argon-mc 
+          git clone -b 18.06 https://github.com/garypang13/luci-theme-edge.git package/lean/luci-theme-edge
+          rm -rf package/lean/luci-theme-argon  
+          git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/lean/luci-theme-argon
+          git clone https://github.com/kenzok8/small.git package/small
+          git clone https://github.com/kenzok8/litte.git package/litte
+          rm -rf package/litte/luci-app-dnsfilter
+          rm -rf package/litte/luci-app-koolddns
+          rm -rf package/litte/luci-app-aliddns
+          git clone https://github.com/MapesxGM/luci-app-tencentddns.git package/litte/luci-app-tencentddns
+          git clone https://github.com/garypang13/luci-app-dnsfilter.git package/litte/luci-app-dnsfilter
+          git clone https://github.com/binge8/luci-app-koolddns.git package/litte/luci-app-koolddns
+          git clone https://github.com/honwen/luci-app-aliddns.git package//luci-app-aliddns
+
+
+
+      - name: Customize
+        run: |
           cd openwrt
-          rm -f .config
-          cp ../lean-config/Lean.config .config     
-    - name: Make Defconfig
-      run: |
-          cd openwrt
-          make defconfig
-    - name: Make download
-      working-directory: ./openwrt
-      run: |
-        make download -j$(nproc)
-        find dl -size -1024c -exec ls -l {} \;
-        find dl -size -1024c -exec rm -f {} \;
-    - name: Compile firmware
-      working-directory: ./openwrt
-      run: |
-        echo -e "$(nproc) thread build."
-        make -j$(nproc) V=s
-    - name : Upload-artifact
-      uses: actions/upload-artifact@main
-      with:
-        name: Lean
-        path: openwrt/bin
-    
-    - name: Remove old artifacts
-      uses: c-hive/gha-remove-artifacts@v1
-      with:
-        age: '1 week'
+          sed -i 's/192.168.1.1/192.168.50.1/g' package/base-files/files/bin/config_generate
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+      - name: Clone Config
+        env: 
+          REPO_URL: https://github.com/co1q84/RouterMod
+        run: |
+            git clone --depth 1 $REPO_URL lean-config
+            cd openwrt
+            rm -f .config
+            cp ../lean-config/Lean.config .config     
+      - name: Make Defconfig
+        run: |
+            cd openwrt
+            make defconfig
+      - name: Make download
+        working-directory: ./openwrt
+        run: |
+          make download -j8
+          find dl -size -1024c -exec rm -f {} \;
+          
+      - name: Compile firmware
+        run: |
+          make -j$(nproc) || make -j1 V=s
+          echo "======================="
+          echo "Space usage:"
+          echo "======================="
+          df -h
+          echo "======================="
+          du -h --max-depth=1 ./ --exclude=build_dir --exclude=bin
+          du -h --max-depth=1 ./build_dir
+          du -h --max-depth=1 ./bin
+          
+      - name : Upload-artifact
+        uses: actions/upload-artifact@main
+        with:
+          name: Lean
+          path: openwrt/bin
+
+      - name: Remove old artifacts
+        uses: c-hive/gha-remove-artifacts@v1
+        with:
+          age: '1 week'
