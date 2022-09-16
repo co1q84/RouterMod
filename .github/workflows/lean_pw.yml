@@ -12,6 +12,8 @@ on:
     - cron : 0 20 6 * *
   watch:
     types: [started]
+  workflow_dispatch:
+
 
 jobs:
 
